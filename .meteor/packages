@@ -7,3 +7,10 @@
 meteor-platform
 autopublish
 insecure
+accounts-password
+twbs:bootstrap
+kadira:flow-router
+kadira:blaze-layout
+useraccounts:flow-routing
+useraccounts:bootstrap
+arillo:flow-router-helpers
