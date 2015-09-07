@@ -1,7 +1,11 @@
 <template name="appObjects">
     <h1>Objects list</h1>
-
-    <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#addObject">Add new object</button>
+    <p>
+        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addObject">
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+            Add new object
+        </button>
+    </p>
 
     {{> tabular table=TabularTables.GeoObjects class="table table-striped table-bordered"}}
 
