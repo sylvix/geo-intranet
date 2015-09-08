@@ -1,0 +1,40 @@
+<template name="objectForm">
+    <div class="modal fade" id="objectFormModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                {{#autoForm collection="GeoObjects" id="addGeoObjectForm" type=formType doc=selectedObject}}
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Add new Object</h4>
+                    </div>
+                    <div class="modal-body">
+                        {{> afQuickField name="type" options="allowed"}}
+
+                        <div class="form-group {{#if afFieldIsInvalid name='geo'}}has-error{{/if}}">
+                            <label class="control-label">{{afFieldLabelText name='geo'}}</label>
+
+                            <div class="input-group">
+                                <div class="input-group-addon">lat</div>
+                                {{> afFieldInput name='geo.coordinates.0'}}
+                                <div class="input-group-addon">lng</div>
+                                {{> afFieldInput name='geo.coordinates.1'}}
+                            </div>
+
+                            {{#if afFieldIsInvalid name='geo'}}
+                                <span class="help-block">{{{afFieldMessage name='geo'}}}</span>
+                            {{/if}}
+                        </div>
+
+                        {{> afQuickField name="title"}}
+                        {{> afQuickField name="danger_level"}}
+                        {{> afQuickField name="description"}}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">{{#if isInsert}}Create{{else}}Update{{/if}}</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                {{/autoForm}}
+            </div>
+        </div>
+    </div>
+</template>
