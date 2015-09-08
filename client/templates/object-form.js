@@ -6,7 +6,14 @@ AutoForm.addHooks('addGeoObjectForm', {
 
 Template.objectForm.helpers({
     selectedObject: function() {
-        return GeoObjects.findOne(Session.get("selectedObjectId"));
+        if (Session.get("selectedObjectId")) {
+            return GeoObjects.findOne(Session.get("selectedObjectId"));
+        } else if (Session.get("selectedCoordinates")) {
+            var selectedCoordinates = Session.get("selectedCoordinates");
+            return {geo: {coordinates: [selectedCoordinates.lat, selectedCoordinates.lng]}}
+        } else {
+            return false;
+        }
     },
     formType: function() {
         if (Session.get("selectedObjectId")) {
