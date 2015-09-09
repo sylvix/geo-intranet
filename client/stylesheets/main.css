@@ -1,3 +1,14 @@
 #map {
     width: 100%;
 }
+
+.relative {
+    position: relative;
+}
+
+#filters {
+    width: 180px;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
