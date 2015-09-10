@@ -55,6 +55,7 @@ Places.prototype.addMarker = function(data) {
         Session.set('selectedDisplayObjectId', event.target.data._id);
 
         this.markerPopup.setLatLng(event.target.getLatLng());
+        this.markerPopup.update();
         this.markerPopup.openOn(this.map);
     }.bind(this));
 
