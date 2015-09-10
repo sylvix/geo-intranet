@@ -1,14 +1,27 @@
 var MAP_ID = 'map';
 
-Meteor.startup(function() {
-    $(window).resize(function() {
-        $('#' + MAP_ID).css('height', window.innerHeight - 80);
-    });
-});
+var iconsByType = {
+    "Establishment": 'fa fa-university',
+    "Transport": 'fa fa-car',
+    "Nature": 'fa fa-tree',
+    "Territory": 'fa fa-map-o',
+    "Infrastructure": 'fa fa-wrench',
+    "Person": 'fa fa-user',
+    "Undefined": 'fa fa-question'
+};
+
+var getIconHtml = function(type) {
+    if (iconsByType.hasOwnProperty(type)) {
+        return '<i class="' + iconsByType[type] + '"></i>';
+    }
+    return '<i class="fa fa-question"></i>';
+};
 
 var Places = function() {
     this.markers = {};
     this.layerGroups = {};
+    this.markerPopup = L.popup();
+    this.markerPopup.setContent($('#popup').get(0));
 };
 
 Places.prototype.setMap = function(map) {
@@ -16,7 +29,9 @@ Places.prototype.setMap = function(map) {
 };
 
 Places.prototype.createMarker = function(data) {
-    var marker = L.marker(data.geo.coordinates);
+    var icon = new L.DivIcon({className: 'pin', html: getIconHtml(data.type), iconSize: [20, 20] });
+    var marker = L.marker(data.geo.coordinates, {icon: icon});
+
     marker.data = data;
 
     return marker;
@@ -37,7 +52,10 @@ Places.prototype.addMarker = function(data) {
     marker.data = data;
 
     marker.on("click", function(event) {
-        console.log("it was clicked");
+        Session.set('selectedDisplayObjectId', event.target.data._id);
+
+        this.markerPopup.setLatLng(event.target.getLatLng());
+        this.markerPopup.openOn(this.map);
     }.bind(this));
 
     this.markers[data._id] = marker;
@@ -85,10 +103,7 @@ Places.prototype.enableLayerGroup = function(name) {
     }
 };
 
-
-Template.appMap.rendered = function() {
-    $(window).resize(); // trigger resize event
-
+var createMap = function() {
     L.Icon.Default.imagePath = 'packages/bevanhunt_leaflet/images';
 
     var map = L.map(MAP_ID, {
@@ -102,7 +117,21 @@ Template.appMap.rendered = function() {
     L.tileLayer.provider('MapQuestOpen.OSM').addTo(map);
     new L.Control.Zoom({ position: 'topright' }).addTo(map);
 
-    Meteor.subscribe('geoObjects');
+    return map;
+};
+
+Meteor.startup(function() {
+    $(window).resize(function() {
+        $('#' + MAP_ID).css('height', window.innerHeight - 80);
+    });
+});
+
+Meteor.subscribe('geoObjects');
+
+Template.appMap.rendered = function() {
+    $(window).resize(); // trigger resize event
+
+    var map = createMap();
 
     var places = new Places();
     places.setMap(map);
@@ -119,7 +148,6 @@ Template.appMap.rendered = function() {
             places.deleteMarker(oldDocument._id);
         }
     });
-
 
     map.on('dblclick', function(event) {
         Session.set('selectedObjectId', false);
@@ -154,5 +182,14 @@ Template.appMap.rendered = function() {
 Template.appMap.helpers({
     types: function() {
         return GeoObjects.OBJECT_TYPES;
+    },
+    dataContext: function() {
+        return GeoObjects.findOne({_id: Session.get('selectedDisplayObjectId')});
+    }
+});
+
+Template.appMap_filters_type.helpers({
+    iconByType: function(type) {
+        return getIconHtml(type);
     }
 });

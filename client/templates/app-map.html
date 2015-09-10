@@ -17,12 +17,24 @@
             </div>
         </div>
     </div>
+
+    <div style="display: none;">
+        <div id="popup">
+            {{> appMap_pinPopup data=dataContext }}
+        </div>
+    </div>
 </template>
 
 <template name="appMap_filters_type">
     <div class="checkbox">
         <label>
-            <input type="checkbox" value="{{ this }}" /> {{ this }}
+            <input type="checkbox" value="{{ this }}" /> {{{ iconByType this }}} {{ this }}
         </label>
     </div>
+</template>
+
+<template name="appMap_pinPopup">
+    <h3>{{ data.title }}</h3>
+    <p><b>Danger level:</b> {{ data.danger_level }}</p>
+    <p>{{ data.description }}</p>
 </template>
